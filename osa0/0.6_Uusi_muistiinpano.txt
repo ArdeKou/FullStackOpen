@@ -1,0 +1,22 @@
+title 0.6 Uusi muistiinpano
+
+note over selain:
+Selaimen lataama spa.js
+pysäyttää lomakkeen tavallisen lähetyksen.
+Sen sijaan lomakkeen data lähetetään
+spa.js omalla lähetyskoodilla
+end note
+
+note over selain:
+Selain lisää lähetettävän datan sivun listan loppuun
+a renderöi listan uudelleen. 
+Lopuksi data lähetetään palvelimelle.
+end note
+
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+
+note over palvelin:
+Palvelin lisää datan listaan.
+end note
+palvelin-->selain: 201 Created
+

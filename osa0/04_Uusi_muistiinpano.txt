@@ -1,0 +1,43 @@
+title 0.4 Uusi muistiinpano
+
+note over selain:
+/notes sivun lomake lähettää
+POST pyynnön /new_note sivulle.
+end note
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note
+
+note over palvelin:
+Palvelin vastaanottaa POST pyynnön
+ja lisää sen mukana tulleen
+datan notes taulukkoon.
+Lopuksi palvelin lähettää
+uudelleenohjauksen selaimelle.
+end note
+
+palvelin-->selain: redirect /notes
+
+note over selain:
+selain lataa /notes sivun
+ja sen html koodissa määritetyt
+.css ja .js tiedostot uudelleen.
+end note
+
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes
+palvelin-->selain: HTML-koodi
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+palvelin-->selain: main.css
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.js
+palvelin-->selain: main.js
+
+note over selain:
+main.js ohjaa selaimen hakemaan
+dataa /data.json sivulta
+end note
+
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+palvelin-->selain: [{ content: "note teksti", date: "2019-01-01" }, ...]
+
+note over selain:
+selain suorittaa  tapahtumankäsittelijän
+joka renderöi muistiinpanot
+end note
