@@ -3,6 +3,7 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons  from './components/Persons'
 import numService from './services/numbers'
+import Notification from './components/Notification'
 
 const App = () => {
     //states
@@ -10,6 +11,8 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newNum, setNewNum] = useState('')
     const [filter, setFilter] = useState('')
+    const [message, setMessage] = useState(null)
+    const [msgStyle, setMsgStyle] = useState(null)
 
     //database getAll
     useEffect(() => {
@@ -34,9 +37,17 @@ const App = () => {
                 .then(returnedNum => {
                     setPersons(persons.concat(returnedNum))
                 })
+
+            setMessage(`Added ${personObj.name}`)
+            setMsgStyle('Add')
+            setTimeout(() => {
+                setMessage(null)
+                setMsgStyle(null)
+            }, 5000)
             setNewName('')
             setNewNum('')
         }
+        
         else
             if(window.confirm(`${newName} is already added to the phonebook, would you like to update the number`)){
                 numService
@@ -44,10 +55,54 @@ const App = () => {
                 .then(updated => {
                     setPersons(persons.filter(person => person.name !== updated.name).concat(updated))
                 })
-                
+                .catch(error => {
+                    setMessage(`${newName} doesn't exist on the server`)
+                    setMsgStyle('Err')
+                    setTimeout(() => {
+                        setMessage(null)
+                        setMsgStyle(null)
+                    }, 5000)
+                })
+
+                setMessage(`Edited ${personObj.name}`)
+                setMsgStyle('Edit')
+                setTimeout(() => {
+                    setMessage(null)
+                    setMsgStyle(null)
+                }, 5000)
+
              }
             setNewName('')
             setNewNum('')
+    }
+
+    //Delete number
+    const deletePerson = (person) => {
+        if (window.confirm(`Delete ${person.name}?`)){
+            numService
+            .del(person.id)
+            .then(removed => {
+                setPersons(persons.filter(initPerson =>
+                    initPerson.id !== person.id
+                ))
+            })
+            .catch(error => {
+                console.log(person.name)
+                setMessage(`${person.name} doesn't exist on the server`)
+                setMsgStyle('Err')
+                setTimeout(() => {
+                    setMessage(null)
+                    setMsgStyle(null)
+                }, 5000)
+            })
+
+            setMessage(`Deleted ${person.name}`)
+            setMsgStyle('Del')
+            setTimeout(() => {
+                setMessage(null)
+                setMsgStyle(null)
+            }, 5000)
+        }
     }
 
     //eventhandlers
@@ -67,6 +122,7 @@ const App = () => {
     return (
         <div>
             <h1>Phonebook</h1>
+            <Notification message={message} style={msgStyle}/>
             <Filter 
                 filter={filter} 
                 changeEvent={handleFilter}
@@ -83,7 +139,7 @@ const App = () => {
             <Persons 
                 persons={persons}
                 filter={filter}
-                setPersons={setPersons}
+                delEvent={deletePerson}
             />
         </div>
     )
