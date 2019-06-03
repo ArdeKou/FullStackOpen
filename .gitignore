@@ -1,7 +1,4 @@
 
-part1/kurssitiedot/node_modules
-part1/unicafe/node_modules
-part1/anekdootit/node_modules
 Gitless
-part2/kurssitiedot/node_modules
-part2/puhelinluettelo/node_modules
+
+node_modules/
