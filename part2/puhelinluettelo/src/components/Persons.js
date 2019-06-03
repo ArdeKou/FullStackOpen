@@ -1,7 +1,7 @@
 import React from 'react'
 import Person from './Person'
 
-const Persons = ({ persons, filter,}) => {
+const Persons = ({ persons, filter, setPersons }) => {
 
     //Filter
     const peopleToShow = persons.filter(person =>
@@ -10,7 +10,7 @@ const Persons = ({ persons, filter,}) => {
 
     //Person render
     const renderPeople = () => peopleToShow.map(person =>   
-        <Person key={person.name} person={person}/>
+        <Person key={person.name} person={person} persons={persons} setPersons={setPersons}/>
     )
 
     return (

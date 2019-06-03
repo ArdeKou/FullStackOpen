@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons  from './components/Persons'
-import axios from 'axios'
+import numService from './services/numbers'
 
 const App = () => {
     //states
@@ -11,12 +11,12 @@ const App = () => {
     const [newNum, setNewNum] = useState('')
     const [filter, setFilter] = useState('')
 
-    //axios get persons from json server
+    //database getAll
     useEffect(() => {
-        axios
-            .get('http://localhost:3001/persons')
-            .then(response => {
-                setPersons(response.data)
+        numService
+            .getAll()
+            .then(initialNums => {
+                setPersons(initialNums)
             })
     }, [])
 
@@ -29,13 +29,25 @@ const App = () => {
         }
         const personExists = persons.find(person => person.name === newName)
         if (!personExists) {
-            setPersons(persons.concat(personObj))
+            numService
+                .create(personObj)
+                .then(returnedNum => {
+                    setPersons(persons.concat(returnedNum))
+                })
             setNewName('')
             setNewNum('')
-
         }
         else
-            alert(`${newName} already exists`)
+            if(window.confirm(`${newName} is already added to the phonebook, would you like to update the number`)){
+                numService
+                .update((persons.find(person => person.name === personObj.name)).id, personObj)
+                .then(updated => {
+                    setPersons(persons.filter(person => person.name !== updated.name).concat(updated))
+                })
+                
+             }
+            setNewName('')
+            setNewNum('')
     }
 
     //eventhandlers
@@ -44,11 +56,9 @@ const App = () => {
 
     }
 
-    
     const handleNumChange = (event) => {
         setNewNum(event.target.value)
     } 
-    
 
     const handleFilter = (event) => {
         setFilter(event.target.value)
@@ -73,10 +83,10 @@ const App = () => {
             <Persons 
                 persons={persons}
                 filter={filter}
+                setPersons={setPersons}
             />
         </div>
     )
-    
 }
 
 export default App
